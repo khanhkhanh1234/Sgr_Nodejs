@@ -7,10 +7,7 @@ const createTableQuery = `
     PRIMARY KEY (id)
   )
 `;
-
-
 connection.query(createTableQuery, function (error, results, fields) {
     console.log(error);
     console.log('The solution is: ', results);
 });
-
