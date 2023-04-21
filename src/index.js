@@ -1,8 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const userRoute = require('./router/user');
+const loginRouter = require('./variables/auth');
 const dotenv = require('dotenv').config();
 const connection = require('./database/connection');
+console.log(process.env.host);
 const app = express();
 const port = 8080;
 app.use(bodyParser.json());
@@ -14,7 +16,8 @@ app.use(
 app.use(express.json());
 
 app.use('/user', userRoute);
+app.use('/auth', loginRouter);
 app.listen(port, () => {
     console.log(`app listening on port ${port}`);
-    console.log(process.env.host);
+   
 });
