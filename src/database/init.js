@@ -2,9 +2,15 @@ const connection = require('./connection');
 const createTableQuery = `
   CREATE TABLE IF NOT EXISTS users (
     id INT(11) NOT NULL AUTO_INCREMENT,
-    fullname VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    salt VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    gender BOOLEAN NOT NULL,
+    email VARCHAR(255) NOT NULL,
     age INT(11) NOT NULL,
     PRIMARY KEY (id)
+    unique (username)
   )
 `;
 connection.query(createTableQuery, function (error, results, fields) {

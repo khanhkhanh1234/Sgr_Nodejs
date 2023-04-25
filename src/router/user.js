@@ -49,8 +49,8 @@ user_router.delete('/:id', function (req, res) {
 function validateUser(req, res, next) {
   var user = req.body;
   var nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/;
-  
-  if (!nameRegex.test(user.fullname) || user.fullname.length < 6 || user.fullname.length > 50 || user.age <= 0) {
+  var emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  if (!nameRegex.test(user.name) || user.name.length > 50 || user.age <= 0 || user.password.length < 3 || user.password.length > 50 || !emailRegex.test(user.email) || user.password != user.repassword) {
     res.status(400).json({ message: "Tên người dùng không hợp lệ" });
     return;
   }
@@ -59,5 +59,7 @@ function validateUser(req, res, next) {
   }
 }
 
-
-module.exports = user_router;
+module.exports = {
+  user_router,
+  validateUser
+}
