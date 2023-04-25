@@ -1,61 +1,86 @@
-const jwt = require('jsonwebtoken');
-const express = require('express');
-const secret = 'secret';
-const loginRouter = express.Router();
-const user  =[{
-    id: 1,
-    username: 'admin',
-    password: 'admin',
-    org : 'sgr'
-},
-{
-    id: 2,
-    username: 'user',
-    password: 'user',
-    org : 'sgr'
-}
-];
-loginRouter.post('/login', (req, res) => {
-    const { username, password } = req.body;    
-    const check = user.find(u => { return u.username === username && u.password === password });
-    if (check) {
-        const token = jwt.sign({ username: user.username }, secret);
-        res.status(200).json({ token });
-        console.log(token);
-       
-        // localStorage.setItem('token', token);
-    }
-    else {
-        res.status(400).json({ message: 'Username or password is incorrect' });
-    }
-});
+const crypto = require('crypto');
 
-loginRouter.get('/balance', (req, res, next) => { 
-    const authorization = req.headers.authorization;
-    const token = authorization.substring(7);
-    const username = req.query.username;
-    try {
-        const isTokenValid = jwt.verify(token, secret);
-        if (isTokenValid) {
-            const check = user.find(u => { return u.username === username });
-            if (check) {
-                res.status(200).json({ balance: 100000 });
-            }
-            else {
-                res.status(400).json({ message: 'Username is incorrect' });
-            }
-        }
-    }
-    catch (err) {
-        res.status(400).json({ message: 'Error' });
-    }
-    
-});
+// function hashPassword(password) {
+//     const hashObject = crypto.createHash('sha512');
+//     const hashedPw = hashObject
+//         .update(password)
+//         .digest('hex');
+//     return hashedPw;
+// }
+// console.log(hashPassword('admin'));
 
 
-module.exports = loginRouter;
-// const token = jwt.sign(user, secret);
-// console.log(token);
-// const userToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsIm9yZyI6InNnciIsImlhdCI6MTY4MTczNTQ2NX0.DNLgkVrLlgYYhN9PWtF3ydtwWigUt-b1UZiOU5vzFtM"
-// const isTokenValid = jwt.verify(userToken, secret);
-// console.log(isTokenValid);
+
+// const crypto = require('crypto');
+// const plainPw = 'admin';
+// function hashPasswordWithSalt(password) {
+//     const salt = crypto.randomBytes(128).toString('hex');
+//     // console.log(salt);
+//     const hashedPw = crypto.pbkdf2Sync(password, salt, 10000, 512, 'sha512').toString('hex');
+//     return hashedPw;
+//     console.log( hashedPw);
+// }
+// console.log(hashPasswordWithSalt('admin'));
+// const i =10;
+
+//     hashPasswordWithSalt(plainPw);
+//     hashPasswordWithSalt(plainPw);
+// const secret = 'secret';
+// function encrypt(input) {
+//     //  const cipher = crypto.createCipher('aes-256-cbc', secret);
+//     const input2 = input + secret;
+//     const encrypted = reverse(input2);
+   
+//     console.log(encrypted);
+//     return encrypted;
+// }
+// function reverse(str) {
+//     return str.split("").reverse().join("");
+// }
+
+// console.log(encrypt('admin'));
+// function decrypt(input) {
+//     // const decipher = crypto.createDecipher('aes-256-cbc', secret);
+//     const decrypted = reverse(input);
+//     const decrypted2 = decrypted.substring(0, decrypted.length - secret.length);
+//     console.log(decrypted2);
+//     return decrypted2;
+// }
+// console.log({
+//     decrypted: decrypt('terces456nimda')
+// });
+const {
+    publicKey,
+    privateKey,
+} = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
+
+//Encrypt data with the private key...
+function encrypt(data) {
+    const encryptedData = crypto.publicEncrypt(
+        {
+            key: publicKey,
+            padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+            oaepHash: "sha256",
+        },
+        //We convert the data string to a buffer using `Buffer.from`
+        Buffer.from(data)
+    );
+
+    //The encrypted data is in the form of bytes, so we print it in base64 format
+    console.log("encrypted data: ", encryptedData.toString("base64"));
+    return encryptedData.toString("base64");   
+}   
+
+function decrypt(data) {
+    const decryptedData = crypto.privateDecrypt(
+        {
+            key: privateKey,
+            padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+            oaepHash: "sha256",
+        }, Buffer.from(data, "base64"));
+
+        console.log("decrypted data: ", decryptedData.toString());
+        return decryptedData.toString();
+};
+encrypt('admin');
+decrypt(encrypt('admin'));
