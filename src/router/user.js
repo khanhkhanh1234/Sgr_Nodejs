@@ -1,7 +1,9 @@
 const express = require('express');
 const user_router = express.Router();
 const connection = require('../database/connection');
-
+const {
+  mailService2
+}= require('../services/mail');
 user_router.get('/', function (req, res) {
   var user = req.params.id;
 connection.query(`select * from users`, [user], function (error, results, fields) {
@@ -45,7 +47,8 @@ user_router.delete('/:id', function (req, res) {
     });
 })
     
-// }
+
+
 function validateUser(req, res, next) {
   var user = req.body;
   var nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/;
