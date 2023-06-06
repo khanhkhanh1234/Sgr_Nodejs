@@ -13,6 +13,12 @@ const createTableQuery = `
     unique (username)
   )
 `;
+
+
+//ALTER TABLE users     ADD COLUMN createdBy     INT,   	 ADD CONSTRAINT fk_createdBy     FOREIGN KEY (createdBy) REFERENCES users(id);
+
+//ALTER TABLE users      add column createdAt DATE;
+
 connection.query(createTableQuery, function (error, results, fields) {
     console.log(error);
     console.log('The solution is: ', results);
